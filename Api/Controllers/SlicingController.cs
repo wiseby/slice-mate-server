@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers;
 [ApiController]
-[Route("Slice/{sliceId}/Models/{modelId}/Slicings")]
+[Route("Slice/{sliceId}/Models/{modelVersion}/Slicings")]
 public class SlicingController : ControllerBase
 {
     private readonly ILogger<SlicingController> _logger;
@@ -32,7 +32,7 @@ public class SlicingController : ControllerBase
     }
 
 
-    [HttpGet("{modelId}")]
+    [HttpGet("{slicingVersion}")]
     public async Task<ActionResult<Model>> Get([FromRoute] Guid sliceId, [FromRoute] int modelVersion, [FromRoute] int slicingVersion)
     {
         try
@@ -47,7 +47,7 @@ public class SlicingController : ControllerBase
     }
 
 
-    [HttpPut("{modelId}")]
+    [HttpPut("{slicingVersion}")]
     public async Task<ActionResult> Update([FromRoute] Guid sliceId, [FromRoute] int modelVersion, [FromRoute] int slicingVersion, [FromBody] Slicing slicing)
     {
         try
@@ -77,7 +77,7 @@ public class SlicingController : ControllerBase
     }
 
 
-    [HttpDelete("{ModelId}")]
+    [HttpDelete("{slicingVersion}")]
     public async Task<ActionResult> Delete([FromRoute] Guid sliceId, [FromRoute] int modelVersion, [FromRoute] int slicingVersion)
     {
         try

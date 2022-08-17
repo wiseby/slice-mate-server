@@ -60,7 +60,6 @@ public class SliceController : ControllerBase
         }
     }
 
-
     [HttpPost("")]
     public async Task<ActionResult<Guid>> Create([FromBody] Slice slice)
     {

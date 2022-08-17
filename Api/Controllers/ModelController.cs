@@ -32,7 +32,7 @@ public class ModelController : ControllerBase
     }
 
 
-    [HttpGet("{modelId}")]
+    [HttpGet("{modelVersion}")]
     public async Task<ActionResult<Model>> Get([FromRoute] Guid sliceId, [FromRoute] int modelVersion)
     {
         try
@@ -47,7 +47,7 @@ public class ModelController : ControllerBase
     }
 
 
-    [HttpPut("{ModelId}")]
+    [HttpPut("{modelVersion}")]
     public async Task<ActionResult> Update([FromRoute] Guid sliceId, [FromRoute] int modelVersion, [FromBody] Model model)
     {
         try
@@ -77,7 +77,7 @@ public class ModelController : ControllerBase
     }
 
 
-    [HttpDelete("{ModelId}")]
+    [HttpDelete("{modelVersion}")]
     public async Task<ActionResult> Delete([FromRoute] Guid sliceId, [FromRoute] int modelVersion)
     {
         try
