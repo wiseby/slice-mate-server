@@ -2,29 +2,29 @@ using DataAccess.Interfaces;
 using DataAccess.Models;
 
 namespace DataAccess.Repositories;
-public class SliceRepository : ISliceService
+public class ModelRepository : IModelRepository
 {
-    public Task<int> Create(Slice entity)
+    public Task<int> Create(Guid sliceId, Model entity)
     {
         throw new NotImplementedException();
     }
 
-    public Task Delete(Guid id)
+    public Task Delete(Guid sliceId, int modelVersion)
     {
         throw new NotImplementedException();
     }
 
-    public Task<Slice> Read(Guid id)
+    public Task<Model> Read(Guid sliceId, int modelVersion)
     {
         throw new NotImplementedException();
     }
 
-    public Task<IReadOnlyCollection<Slice>> ReadMany(string search, int cursor)
+    public Task<IReadOnlyCollection<Model>> ReadMany(Guid sliceId, string search, int cursor)
     {
         throw new NotImplementedException();
     }
 
-    public Task Update(Guid id, Slice entity)
+    public Task Update(Guid sliceId, int modelVersion, Model entity)
     {
         throw new NotImplementedException();
     }

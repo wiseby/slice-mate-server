@@ -1,5 +1,7 @@
 using DataAccess.Interfaces;
 using DataAccess.Repositories;
+using Domain.Interfaces;
+using Domain.Services;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -29,8 +31,12 @@ builder.Services.AddSwaggerGen(options =>
             }
         });
     });
-builder.Services.AddScoped<IRepository<Slice>, SliceRepository>();
-builder.Services.AddScoped<IRepository<Version>, VersionRepository>();
+builder.Services.AddScoped<DataAccess.Interfaces.ISliceService, SliceRepository>();
+builder.Services.AddScoped<IModelRepository, ModelRepository>();
+builder.Services.AddScoped<ISlicingRepository, SlicingRepository>();
+builder.Services.AddScoped<Domain.Interfaces.ISliceService, SliceService>();
+builder.Services.AddScoped<IModelService, ModelService>();
+builder.Services.AddScoped<ISlicingService, SlicingService>();
 
 var app = builder.Build();
 
