@@ -1,9 +1,17 @@
 using DataAccess.Interfaces;
 using DataAccess.Models;
+using MongoDB.Driver;
 
 namespace DataAccess.Repositories;
 public class SliceRepository : ISliceService
 {
+    private readonly IMongoCollection<Slice> _collection;
+
+    public SliceRepository(IMongoCollection<Slice> collection)
+    {
+        _collection = collection;
+    }
+
     public Task<int> Create(Slice entity)
     {
         throw new NotImplementedException();

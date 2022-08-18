@@ -1,8 +1,12 @@
 using DataAccess.Interfaces;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace DataAccess.Models;
 public class Slice : IMongoEntity
 {
+    [BsonId]
+    [BsonRepresentation(BsonType.ObjectId)]
     public Guid Id { get; init; }
     public DateTime Created { get; set; }
     public DateTime Updated { get; set; }

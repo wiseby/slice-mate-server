@@ -1,17 +1,24 @@
+using Api.Options;
 using DataAccess.Interfaces;
+using DataAccess.Models;
 using DataAccess.Repositories;
 using Domain.Interfaces;
 using Domain.Services;
+using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
+using MongoDB.Bson;
+using MongoDB.Driver;
+using MongoDB.Driver.Core.Events;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+var services = builder.Services;
 
-builder.Services.AddControllers();
+services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(options =>
+services.AddEndpointsApiExplorer();
+services.AddSwaggerGen(options =>
     {
         options.SwaggerDoc("v1", new OpenApiInfo
         {
@@ -31,12 +38,47 @@ builder.Services.AddSwaggerGen(options =>
             }
         });
     });
-builder.Services.AddScoped<DataAccess.Interfaces.ISliceService, SliceRepository>();
-builder.Services.AddScoped<IModelRepository, ModelRepository>();
-builder.Services.AddScoped<ISlicingRepository, SlicingRepository>();
-builder.Services.AddScoped<Domain.Interfaces.ISliceService, SliceService>();
-builder.Services.AddScoped<IModelService, ModelService>();
-builder.Services.AddScoped<ISlicingService, SlicingService>();
+
+services.Configure<MongoDb>(builder.Configuration.GetSection(MongoDb.Position));
+services.AddSingleton<IMongoClient>(s =>
+{
+    var mongoDbOptions = s.GetRequiredService<IOptions<MongoDb>>().Value;
+    var mongoClientSettings = MongoClientSettings.FromConnectionString(mongoDbOptions.ConnectionString);
+    var env = s.GetService<IWebHostEnvironment>();
+
+    if (env != null && env.IsDevelopment())
+    {
+        var logger = s.GetService<ILogger<MongoClient>>();
+        mongoClientSettings.ClusterConfigurator = builder =>
+        {
+            builder.Subscribe<CommandStartedEvent>(e =>
+            {
+                var json = e.Command.ToJson();
+                if (json.Length >= 32 && json.Length < 16384 && logger != null)
+                {
+                    logger.LogDebug($"MongoDb Command: {Environment.NewLine}{json}");
+                }
+            });
+        };
+    }
+    return new MongoClient(mongoClientSettings);
+});
+services.AddSingleton(s =>
+{
+    var mongoDbOptions = s.GetRequiredService<IOptions<MongoDb>>().Value;
+    return s.GetRequiredService<IMongoClient>().GetDatabase(mongoDbOptions.Database);
+});
+services.AddSingleton(s => s.GetRequiredService<IMongoDatabase>().GetCollection<Slice>("Slices"));
+services.AddSingleton(s => s.GetRequiredService<IMongoDatabase>().GetCollection<Model>("Models"));
+services.AddSingleton(s => s.GetRequiredService<IMongoDatabase>().GetCollection<Slicing>("Slicings"));
+
+
+services.AddScoped<DataAccess.Interfaces.ISliceService, SliceRepository>();
+services.AddScoped<IModelRepository, ModelRepository>();
+services.AddScoped<ISlicingRepository, SlicingRepository>();
+services.AddScoped<Domain.Interfaces.ISliceService, SliceService>();
+services.AddScoped<IModelService, ModelService>();
+services.AddScoped<ISlicingService, SlicingService>();
 
 var app = builder.Build();
 

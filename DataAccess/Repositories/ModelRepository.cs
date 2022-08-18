@@ -1,9 +1,17 @@
 using DataAccess.Interfaces;
 using DataAccess.Models;
+using MongoDB.Driver;
 
 namespace DataAccess.Repositories;
 public class ModelRepository : IModelRepository
 {
+    private readonly IMongoCollection<Model> _collection;
+
+    public ModelRepository(IMongoCollection<Model> collection)
+    {
+        _collection = collection;
+    }
+
     public Task<int> Create(Guid sliceId, Model entity)
     {
         throw new NotImplementedException();

@@ -1,9 +1,17 @@
 using DataAccess.Interfaces;
 using DataAccess.Models;
+using MongoDB.Driver;
 
 namespace DataAccess.Repositories;
 public class SlicingRepository : ISlicingRepository
 {
+    private readonly IMongoCollection<Slicing> _collection;
+
+    public SlicingRepository(IMongoCollection<Slicing> collection)
+    {
+        _collection = collection;
+    }
+
     public Task<int> Create(Guid sliceId, int modelVersion, Slicing entity)
     {
         throw new NotImplementedException();
